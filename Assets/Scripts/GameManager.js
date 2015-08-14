@@ -1,8 +1,9 @@
 #pragma strict
 
 public static var instance : GameManager = null;
-
 public var boardScript : BoardManager;
+public var playerFoodPoints : int = 100;
+@HideInInspector public var playersTurn : boolean = true;
 
 private var level : int = 3;
 
@@ -20,4 +21,8 @@ function Awake() {
 
 function InitGame() {
     boardScript.SetupScene(level);
+}
+
+public function GameOver() {
+        enabled = false;
 }
