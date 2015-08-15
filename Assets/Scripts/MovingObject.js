@@ -1,46 +1,28 @@
 ﻿#pragma strict
 
-public var moveTime : float = 0.1;
-public var blockingLayer : LayerMask;
+class MovingObject extends MonoBehaviour {
 
-private var boxCollider: BoxCollider2D;
-private var rb2D : Rigidbody2D;
-private var inverseMoveTime : float;
+    public var moveTime : float = 0.1;
+    public var blockingLayer : LayerMask;
 
-function Start () {
-    boxCollider = GetComponent.<BoxCollider2D>();
-    rb2D = GetComponent.<Rigidbody2D>();
-    inverseMoveTime = 1 / moveTime;
-}
+    // private var boxCollider: BoxCollider2D;
+    private var rb2D : Rigidbody2D;
+    private var inverseMoveTime : float;
 
-function Move(xDir : int, yDir : int, hit : RaycastHit2D) {
-    var start = transform.position;
-    var end = start + new Vector2(xDir, yDir);
-    boxCollider.enabled = false;
-    hit = Physics2D.Linecast (start, end, blockingLayer);
-    boxCollider.enabled = true;
-    if (hit.transform == null) {
-        SmoothMovement(end);
-        return true;
+    function Start () {
+        rb2D = GetComponent.<Rigidbody2D>();
+        inverseMoveTime = 1 / moveTime;
     }
-    return false;
-}
 
-function SmoothMovement(end : Vector3) {
-    var sqrRemainingDistance = (transform.position - end).sqrMagnitude;
-    while (sqrRemainingDistance > Number.Epsilon) {
-        var newPosition : Vector3 = Vector3.MoveTowards (rb2D.position, end, inverseMoveTime * Time.deltaTime);
-        rb2D.MovePosition(newPosition);
-        sqrRemainingDistance = (transform.position - end).sqrMagnitude;
-        yield null;
+    function SmoothMovement(end : Vector3) {
+        var sqrRemainingDistance = (transform.position - end).sqrMagnitude;
+        while (sqrRemainingDistance > Number.Epsilon) {
+            var newPosition : Vector3 = Vector3.MoveTowards (rb2D.position, end, inverseMoveTime * Time.deltaTime);
+            rb2D.MovePosition(newPosition);
+            sqrRemainingDistance = (transform.position - end).sqrMagnitude;
+            yield null;
+        }
     }
-}
-
-
-function AttemptMove(xDir : int, yDir : int) {
-    // var hit : RaycastHit2D;
-    // var canMove = Move (xDir, yDir,);
-
 }
 
 
