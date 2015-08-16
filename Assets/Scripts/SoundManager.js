@@ -1,5 +1,8 @@
 ﻿#pragma strict
 
+import System.Collections.Generic;
+
+
 public var fxSource : AudioSource;
 public var musicSource : AudioSource;
 
@@ -20,12 +23,16 @@ function Awake () {
 	DontDestroyOnLoad(gameObject);
 }
 
-public function PlaySingle(clip AudioClip) {
-    // body...
+public function PlaySingle(clip : AudioClip) {
+    fxSource.clip = clip;
+    fxSource.Play();
 }
 
+function RandomizeFx(clips : List.<AudioClip>) {
+    var randomIndex = Random.Range(0, clips.Count);
+    var randomPitch : float = Random.Range(lowPitchRange, highPitchRange);
 
-
-function Update () {
-
+    fxSource.pitch = randomPitch;
+    fxSource.clip = clips[randomIndex];
+    fxSource.Play();
 }
