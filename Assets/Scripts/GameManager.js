@@ -14,6 +14,7 @@
 
 import System.Collections.Generic;
 
+public var levelStartDelay = 2.0;
 public var turnDelay = 0.1;
 
 public static var instance : GameManager = null;
@@ -21,10 +22,19 @@ public var boardScript : BoardManager;
 public var playerFoodPoints : int = 100;
 @HideInInspector public var playersTurn : boolean = true;
 
+
+private var levelText : UI.Text;
+private var levelImage : GameObject;
 private var enemies : List.<Enemy>;
 private var enemiesMoving : boolean;
+private var doingSetup : boolean;
 
-private var level : int = 3;
+private var level : int = 1;
+
+function OnLevelWasLoaded(index : int) {
+    level++;
+    InitGame();
+}
 
 function Awake() {
     if (instance == null) {
@@ -40,25 +50,51 @@ function Awake() {
 }
 
 function InitGame() {
+    doingSetup = true;
+
+    levelImage = GameObject.Find("LevelImage");
+    levelText = GameObject.Find("LevelText").GetComponent.<UI.Text>();
+    levelText.text = "Day " + level;
+    levelImage.SetActive(true);
+    Invoke("HideLevelImage", levelStartDelay);
+
     enemies.Clear();
     boardScript.SetupScene(level);
 }
 
+function HideLevelImage() {
+    levelImage.SetActive(false);
+    doingSetup = false;
+}
+
 public function GameOver() {
+    levelText.text = "After " + level + " days, you starved.";
+    levelImage.SetActive(true);
     enabled = false;
 }
 
 function MoveEnemies() {
     enemiesMoving = true;
     yield WaitForSeconds(turnDelay);
-    if (enemies.length == 0) {
+    if (enemies.Count == 0) {
         yield WaitForSeconds(turnDelay);
     }
 
     for (var i = 0; i < enemies.Count; i++) {
-        enemies[i].GetComponent.<Enemy>().MoveEnemy();
-        yield WaitForSeconds(enemies[i].GetComponent.<Enemy>().moveTime);
+        enemies[i].MoveEnemy();
+        yield WaitForSeconds(enemies[i].moveTime);
     }
+    playersTurn = true;
+    enemiesMoving = false;
+}
 
+function Update() {
+    if (playersTurn || enemiesMoving || doingSetup) {
+        return;
+    }
+    MoveEnemies();
+}
 
+function AddEnemyToList(script : Enemy) {
+    enemies.Add(script);
 }

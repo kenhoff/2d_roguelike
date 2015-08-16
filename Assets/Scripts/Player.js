@@ -5,6 +5,7 @@ class Player extends MovingObject {
     public var pointsPerFood : int = 10;
     public var pointsPerSoda : int = 20;
     public var restartLevelDelay : float = 1;
+    public var foodText : UI.Text;
 
     private var boxCollider: BoxCollider2D;
     private var animator : Animator;
@@ -14,6 +15,9 @@ class Player extends MovingObject {
         boxCollider = GetComponent.<BoxCollider2D>();
         animator = GetComponent.<Animator>();
         food = GameManager.instance.playerFoodPoints;
+
+        foodText.text = "Food: " + food;
+
         super();
     }
 
@@ -23,6 +27,8 @@ class Player extends MovingObject {
 
     function AttemptMove (xDir : int, yDir : int) {
         food--;
+        foodText.text = "Food: " + food;
+
 
         var start = transform.position;
         var end = start + new Vector2(xDir, yDir);
@@ -41,7 +47,7 @@ class Player extends MovingObject {
 
             if (hit.transform.CompareTag("Wall")) {
                 var hitWall = hit.transform.gameObject.GetComponent.<Wall>();
-                Debug.Log(hitWall);
+                // Debug.Log(hitWall); 
                 hitWall.DamageWall(wallDamage);
                 animator.SetTrigger("playerChop");
             }
@@ -66,6 +72,7 @@ class Player extends MovingObject {
     public function LoseFood(loss : int) {
         animator.SetTrigger("playerHit");
         food -= loss;
+        foodText.text = "-" + loss + " Food: " + food;
         CheckIfGameOver();
     }
 
@@ -77,11 +84,14 @@ class Player extends MovingObject {
         else if (other.CompareTag("Food")) {
             food += pointsPerFood;
             other.gameObject.SetActive(false);
+            foodText.text = "+" + pointsPerFood + " Food: " + food;
         }
-        else if (other.CompareTag("Food")) {
+        else if (other.CompareTag("Soda")) {
             food += pointsPerSoda;
             other.gameObject.SetActive(false);
+            foodText.text = "+" + pointsPerSoda + " Food: " + food;
         }
+
     }
 
 

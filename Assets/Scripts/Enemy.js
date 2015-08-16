@@ -13,6 +13,7 @@ class Enemy extends MovingObject {
         boxCollider = GetComponent.<BoxCollider2D>();
         animator = GetComponent.<Animator>();
         target = GameObject.FindGameObjectWithTag("Player").transform;
+        GameManager.instance.AddEnemyToList(this);
         super();
     }
 
@@ -40,6 +41,7 @@ class Enemy extends MovingObject {
             if (hit.transform.CompareTag("Player")) {
                 var hitPlayer = hit.transform.gameObject.GetComponent.<Player>();
                 hitPlayer.LoseFood(playerDamage);
+                animator.SetTrigger("enemyAttack");
             }
         }
 
