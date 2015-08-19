@@ -70,9 +70,9 @@ class Player extends MovingObject {
 
     function CheckIfGameOver() {
         if (food <= 0) {
-            SoundManager.instance.PlaySingle(gameOverSound);
             SoundManager.instance.musicSource.Stop();
             GameManager.instance.GameOver();
+            SoundManager.instance.PlaySingle(gameOverSound);
         }
     }
 

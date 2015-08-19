@@ -9,6 +9,9 @@ class Enemy extends MovingObject {
     private var target : Transform;
     private var skipMove : boolean;
 
+    public var attackSounds : List.<AudioClip>;
+
+
     function Start () {
         boxCollider = GetComponent.<BoxCollider2D>();
         animator = GetComponent.<Animator>();
@@ -42,6 +45,7 @@ class Enemy extends MovingObject {
                 var hitPlayer = hit.transform.gameObject.GetComponent.<Player>();
                 hitPlayer.LoseFood(playerDamage);
                 animator.SetTrigger("enemyAttack");
+                SoundManager.instance.RandomizeFx(attackSounds);
             }
         }
 
